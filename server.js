@@ -1,25 +1,23 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const connectDB = require('./config/mongodb');
-const userRoutes = require('./routes/UserRoutes.js');
-const eventRoutes = require('./routes/EventRoutes.js');
+require("dotenv").config();
+const express = require("express");
+const connectDB = require("./config/mongodb");
+const userRoutes = require("./routes/UserRoutes.js");
+const eventRoutes = require("./routes/EventRoutes.js");
 
-
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-
+app.use(cors());
 app.use(express.json());
 
-connectDB()
+connectDB();
 
 // Routes
-app.use('/api/users', userRoutes);
-app.use('/api/events', eventRoutes);
-
+app.use("/api/users", userRoutes);
+app.use("/api/events", eventRoutes);
 
 // Start server
 app.listen(PORT, () => {

@@ -8,7 +8,7 @@ const validateEvent = (eventData) => {
     date: Joi.date().required(), 
     category: Joi.string().required().valid('Conference', 'Workshop', 'Meetup', 'Seminar', 'Webinar'), 
     location: Joi.string().required().trim().min(3).max(200), 
-    organizer: Joi.array().items(Joi.string().hex().length(24)), 
+    organizer: Joi.string().required().trim().min(10).max(500), 
     attendees: Joi.array().items(Joi.string().hex().length(24)),
   });
 
