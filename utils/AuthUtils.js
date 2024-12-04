@@ -1,5 +1,5 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 // Function to hash password using bcrypt
 const hashPassword = async (password) => {
@@ -15,7 +15,9 @@ const comparePassword = async (password, hashedPassword) => {
 
 // Function to generate JWT token
 const generateToken = (userId) => {
-  const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
   return token;
 };
 

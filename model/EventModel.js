@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const eventSchema = new mongoose.Schema(
   {
@@ -9,7 +9,7 @@ const eventSchema = new mongoose.Schema(
     },
     organizer: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     description: {
@@ -18,14 +18,14 @@ const eventSchema = new mongoose.Schema(
       trim: true,
     },
     date: {
-      type: Date, 
-      default: new Date,
+      type: Date,
+      default: new Date(),
       required: true,
     },
     category: {
       type: String,
       required: true,
-      enum: ['Conference', 'Workshop', 'Meetup', 'Seminar', 'Webinar'],
+      enum: ["Conference", "Workshop", "Meetup", "Seminar", "Webinar"],
     },
     location: {
       type: String,
@@ -34,13 +34,13 @@ const eventSchema = new mongoose.Schema(
     attendees: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', 
+        ref: "User",
       },
     ],
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
 
-module.exports = mongoose.model('Event', eventSchema);
+module.exports = mongoose.model("Event", eventSchema);

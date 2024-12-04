@@ -3,13 +3,13 @@
 //       // Convert page and limit to numbers
 //       const pageNum = parseInt(page) || 1;
 //       const pageLimit = parseInt(limit) || 10;
-  
+
 //       // Calculate the skip value based on the page number and limit
 //       const skip = (pageNum - 1) * pageLimit;
-  
+
 //       // Build the search query (filters)
 //       const query = {};
-  
+
 //       if (filter.title) {
 //         query.title = { $regex: filter.title, $options: 'i' }; // Case-insensitive search
 //       }
@@ -19,16 +19,16 @@
 //       if (filter.location) {
 //         query.location = { $regex: filter.location, $options: 'i' }; // Case-insensitive search
 //       }
-  
+
 //       // Get total count of items in the collection with filters
 //       const totalCount = await model.countDocuments(query);
-  
+
 //       // Get the paginated results with filters
 //       const results = await model.find(query).skip(skip).limit(pageLimit);
-  
+
 //       // Calculate total number of pages
 //       const totalPages = Math.ceil(totalCount / pageLimit);
-  
+
 //       return {
 //         results,
 //         pagination: {
@@ -43,8 +43,14 @@
 //       throw new Error('Error during pagination');
 //     }
 //   };
-  
-const paginate = async (model, page = 1, limit = 10, filter = {}, populate = '') => {
+
+const paginate = async (
+  model,
+  page = 1,
+  limit = 10,
+  filter = {},
+  populate = ""
+) => {
   try {
     const pageNum = parseInt(page) || 1;
     const pageLimit = parseInt(limit) || 10;
@@ -53,13 +59,13 @@ const paginate = async (model, page = 1, limit = 10, filter = {}, populate = '')
     const query = {};
 
     if (filter.title) {
-      query.title = { $regex: filter.title, $options: 'i' };
+      query.title = { $regex: filter.title, $options: "i" };
     }
     if (filter.category) {
-      query.category = { $regex: filter.category, $options: 'i' };
+      query.category = { $regex: filter.category, $options: "i" };
     }
     if (filter.location) {
-      query.location = { $regex: filter.location, $options: 'i' };
+      query.location = { $regex: filter.location, $options: "i" };
     }
 
     const totalCount = await model.countDocuments(query);
@@ -83,10 +89,8 @@ const paginate = async (model, page = 1, limit = 10, filter = {}, populate = '')
     };
   } catch (err) {
     console.error(err);
-    throw new Error('Error during pagination');
+    throw new Error("Error during pagination");
   }
 };
 
-
-  module.exports = { paginate };
-  
+module.exports = { paginate };

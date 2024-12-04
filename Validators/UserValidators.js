@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
 // User validation schema
 const validateUser = (userData) => {
@@ -13,12 +13,12 @@ const validateUser = (userData) => {
 };
 // User login validation schema
 const validateLogin = (loginData) => {
-    const schema = Joi.object({
-      email: Joi.string().email().required().trim().lowercase(),
-      password: Joi.string().required().min(6).max(100), // Minimum length of 6 characters for password
-    });
-  
-    return schema.validate(loginData);
-  };
+  const schema = Joi.object({
+    email: Joi.string().email().required().trim().lowercase(),
+    password: Joi.string().required().min(6).max(100), // Minimum length of 6 characters for password
+  });
 
-module.exports = { validateUser , validateLogin }; 
+  return schema.validate(loginData);
+};
+
+module.exports = { validateUser, validateLogin };
