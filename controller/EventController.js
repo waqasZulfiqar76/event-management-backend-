@@ -47,21 +47,44 @@ exports.createEvent = async (req, res) => {
 };
 
 // Get All Events
+
 exports.getAllEvents = async (req, res) => {
   try {
-    const { page = 1, limit = 10, title, category, location } = req.query;
-
+    const {
+      page = 1,
+      limit = 10,
+      title,
+      category,
+      location,
+      approvalStatus,
+    } = req.query;
+    console.log(req.query);
+    // Build the filter object based on query parameters
     const filter = {
       title,
       category,
       location,
+      approvalStatus,
     };
 
+    // If an approvalStatus is provided, add it to the filter
+    if (approvalStatus) {
+      // Ensure approvalStatus is either 'pending' or 'approved'
+      if (!["pending", "approved"].includes(approvalStatus)) {
+        return res.status(400).json({
+          message: "Invalid approval status. Use 'pending' or 'approved'.",
+        });
+      }
+      filter.approvalStatus = approvalStatus; // Add approval status filter
+    }
+
+    // Paginate the events with the built filter
     const { results, pagination } = await paginate(
       Event,
       page,
       limit,
       filter,
+
       "organizer"
     );
 
