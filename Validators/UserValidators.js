@@ -6,6 +6,7 @@ const validateUser = (userData) => {
     name: Joi.string().required().trim().min(3).max(50),
     email: Joi.string().email().required().trim().lowercase(),
     password: Joi.string().required().min(6).max(100),
+    role: Joi.string().valid("user", "admin").default("user"),
     eventsJoined: Joi.array().items(Joi.string().hex().length(24)),
   });
 

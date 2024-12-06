@@ -4,6 +4,7 @@ const {
   generateToken,
   comparePassword,
 } = require("../utils/AuthUtils.js");
+const { paginate } = require("../utils/pagination.js");
 const {
   validateUser,
   validateLogin,
@@ -11,14 +12,26 @@ const {
 
 // Signup Controller
 exports.signup = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
 
   // Validate input
   const { error } = validateUser(req.body);
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
   }
+
   try {
+    // Check if an admin already exists in the system
+    if (role === "admin") {
+      const existingAdmin = await User.findOne({ role: "admin" });
+      if (existingAdmin) {
+        return res
+          .status(400)
+          .json({ message: "Admin already exists. Only one admin allowed." });
+      }
+    }
+
+    // Check if the user already exists with the provided email
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
@@ -26,21 +39,31 @@ exports.signup = async (req, res) => {
         .json({ message: "User already exists with this email." });
     }
 
+    // Hash the password before saving
     const hashedPassword = await hashPassword(password);
 
+    // Create a new user
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
+      role: role || "user", // Default to 'user' if no role is provided
     });
 
+    // Save the new user to the database
     await newUser.save();
 
+    // Generate a token for the user
     const token = generateToken(newUser._id);
 
+    // Respond with success message and token
     res.status(201).json({
       message: "User registered successfully.",
-      newUser: newUser,
+      newUser: {
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
       token,
     });
   } catch (err) {
@@ -74,7 +97,7 @@ exports.login = async (req, res) => {
     }
 
     // Generate JWT token
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.role, user.name);
 
     // Respond with the token
     res.status(200).json({
@@ -82,7 +105,7 @@ exports.login = async (req, res) => {
       token,
       user: {
         _id: user._id,
-
+        role: user.role,
         name: user.name,
         email: user.email,
         eventsJoined: user.eventsJoined,
@@ -91,6 +114,58 @@ exports.login = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error. Please try again." });
+  }
+};
+
+// Controller to get all users
+exports.getAllUsers = async (req, res) => {
+  const { page, limit, title, category, location } = req.query; // Extract query parameters
+
+  try {
+    // Pass query filters if needed, or use empty object
+    const filter = { title, category, location };
+
+    const data = await paginate(User, page, limit, filter);
+
+    res.status(200).json({
+      success: true,
+      data: data.results,
+      pagination: data.pagination,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch users",
+      error: error.message,
+    });
+  }
+};
+
+// Controller to get a specific user by ID
+exports.getUserById = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId)
+      .populate("eventsCreated")
+      .populate("eventsJoined"); // Find user by ID
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch user",
+      error: error.message,
+    });
   }
 };
 

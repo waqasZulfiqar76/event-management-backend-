@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const connectDB = require("./config/mongodb");
 const userRoutes = require("./routes/UserRoutes.js");
+const adminRoutes = require("./routes/AdminRoutes.js");
 const eventRoutes = require("./routes/EventRoutes.js");
 
 const cors = require("cors");
@@ -17,6 +18,7 @@ connectDB();
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/events", eventRoutes);
 
 // Start server
